@@ -1,34 +1,25 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res } from '@nestjs/common';
 import { ProductOptionsService } from './product-options.service';
 import { CreateProductOptionDto } from './dto/create-product-option.dto';
 import { UpdateProductOptionDto } from './dto/update-product-option.dto';
+import { Response } from 'express';
 
 @Controller('product-options')
 export class ProductOptionsController {
-  constructor(private readonly productOptionsService: ProductOptionsService) {}
+  constructor(private readonly productOptionsService: ProductOptionsService) { }
 
   @Post()
-  create(@Body() createProductOptionDto: CreateProductOptionDto) {
-    return this.productOptionsService.create(createProductOptionDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.productOptionsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productOptionsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductOptionDto: UpdateProductOptionDto) {
-    return this.productOptionsService.update(+id, updateProductOptionDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productOptionsService.remove(+id);
+  async create(@Body() createProductOptionDto: CreateProductOptionDto, @Res() res: Response) {
+    try {
+      let [status, message, data] = await this.productOptionsService.create(createProductOptionDto);
+      return res.status(status ? 200 : 213).json({
+        message,
+        data
+      })
+    } catch (err) {
+      return res.status(500).json({
+        message: "Controller lỗi!"
+      })
+    }
   }
 }

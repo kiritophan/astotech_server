@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Delete, HttpException, HttpStatus, Injectable, Param, Res } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -33,16 +33,33 @@ export class CategoriesService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  async findOne(id: string) {
+    try {
+      let product = await this.categories.findOne({ where: { id } })
+      return {
+        message: "Lấy Categories thành công",
+        data: product
+      }
+    } catch (err) {
+      throw new HttpException('Lỗi model', HttpStatus.BAD_REQUEST)
+    }
   }
 
   update(id: number, updateCategoryDto: UpdateCategoryDto) {
     return `This action updates a #${id} category`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: string) {
+    try {
+      let categoryId = await this.categories.delete(id)
+      return {
+        message: "delete success",
+        data: categoryId
+      }
+    } catch (err) {
+      throw new HttpException('loi model', HttpStatus.BAD_REQUEST)
+    }
+
   }
 
   async searchByTitle(searchString: string) {

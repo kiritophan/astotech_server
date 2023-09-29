@@ -1,30 +1,25 @@
 import { Category } from "src/modules/categories/entities/category.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { ProductOption } from "src/modules/product-options/entities/product-option.entity";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Product {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn('uuid')
     id: string;
+
+    @Column()
+    categoryId: string;
+
+    @ManyToOne(() => Category, (Category) => Category.products)
+    @JoinColumn({ name: 'categoryId' })
+    category: Category;
 
     @Column()
     name: string;
 
     @Column()
-    desc: string;
+    des: string;
 
-    @Column()
-    avatar: string;
-
-    @Column()
-    price: number;
-
-    @Column({
-        nullable: false
-    })
-    categoryId: string;
-
-    @ManyToOne(() => Category, (category) => category.products)
-    category: Category
-
-
+    @OneToMany(() => ProductOption, (productOption) => productOption.product)
+    options: ProductOption[];
 }

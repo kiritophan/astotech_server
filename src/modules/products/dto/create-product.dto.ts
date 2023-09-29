@@ -1,19 +1,10 @@
-import { Allow } from 'class-validator';
+import { IsNotEmpty } from "class-validator";
 
 export class CreateProductDto {
-    @Allow()
-    name: string;
-
-    @Allow()
-    price: number;
-
-    @Allow()
-    desc: string;
-
-    @Allow()
-    quantity: number;
-
-    @Allow()
+    @IsNotEmpty()
     categoryId: string;
-
+    @IsNotEmpty()
+    name: string;
+    @IsNotEmpty()
+    des: string;
 }

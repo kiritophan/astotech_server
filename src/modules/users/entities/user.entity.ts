@@ -28,6 +28,7 @@ export class User {
 
     @Column()
     password: string;
+    receipts: any;
 
     @BeforeInsert()
     async hashPassword() {

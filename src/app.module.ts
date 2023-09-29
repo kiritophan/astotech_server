@@ -10,6 +10,9 @@ import { SocketModule } from './modules/socket/socket.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { ProductsModule } from './modules/products/products.module';
 import { ProductOptionsModule } from './modules/product-options/product-options.module';
+import { OptionPicturesModule } from './modules/option-pictures/option-pictures.module';
+import { ReceiptsModule } from './modules/receipts/receipts.module';
+import { ReceiptDetailModule } from './modules/receipt-detail/receipt-detail.module';
 
 @Module({
   imports: [
@@ -30,7 +33,11 @@ import { ProductOptionsModule } from './modules/product-options/product-options.
     UserAddressesModule,
     AuthenticationModule,
     SocketModule,
-    ProductOptionsModule
+    ProductOptionsModule,
+    OptionPicturesModule,
+    ReceiptsModule,
+    ReceiptDetailModule
+
   ],
   controllers: [AppController],
   providers: [AppService],

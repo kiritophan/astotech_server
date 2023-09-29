@@ -2,17 +2,16 @@ import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-/* Your Config */
+//congif firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyDCRcJbANr8ecACEFqfPvhK0eCdMycv3SU",
-  authDomain: "typescript-pr-98dff.firebaseapp.com",
-  projectId: "typescript-pr-98dff",
-  storageBucket: "typescript-pr-98dff.appspot.com",
-  messagingSenderId: "692960288298",
-  appId: "1:692960288298:web:b3124e9b341d917ec22d53",
-  measurementId: "G-RDZ1W9D1VQ"
+  apiKey: "AIzaSyBC1KAVcuX7kcqMcA567l7NCvKCS7gDsiM",
+  authDomain: "astotech-87421.firebaseapp.com",
+  projectId: "astotech-87421",
+  storageBucket: "astotech-87421.appspot.com",
+  messagingSenderId: "217948861505",
+  appId: "1:217948861505:web:cb250eee3785a534b9c2c0",
+  measurementId: "G-N93YR6X0LM"
 };
-
 
 const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);
@@ -27,10 +26,10 @@ export async function uploadFileToStorage(file: any, folderName: any, bufferData
   let metadata;
   if (!bufferData) {
     // tên file trên file base
-    fileRef = ref(storage, `${folderName}/` + file.name);
+    fileRef = ref(storage, `${folderName}/` + Math.random() * file.originalname);
   } else {
     // tên file trên file base
-    fileRef = ref(storage, `${folderName}/` + (file as any).filename);
+    fileRef = ref(storage, `${folderName}/` + `${Date.now() * Math.ceil(Math.random())}` + file.originalname);
     metadata = {
       contentType: (file as any).mimetype,
     };

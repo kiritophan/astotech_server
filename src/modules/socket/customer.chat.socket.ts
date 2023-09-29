@@ -69,7 +69,7 @@ export class CustomerChatSocket implements OnModuleInit {
                         discordChannelId: newClient.discordChannelId,
                         time: String(Date.now()),
                         userId: user.id,
-                        adminId: "ddf2ca6f-0c24-4c8b-a7d7-be48f26ba5f5" // tạm thời fix cứng    
+                        adminId: "ddf2ca6f-0c24-4c8b-a7d7-be48f26ba5f5" // tạm thời fix cứng
                     }
                     let newChatHisotry = await this.customerChatService.createChat(chat)
                     if (newChatHisotry) {
@@ -141,4 +141,3 @@ export class CustomerChatSocket implements OnModuleInit {
         }
     }
 }
-

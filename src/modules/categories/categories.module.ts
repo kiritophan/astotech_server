@@ -12,5 +12,5 @@ import { Category } from './entities/category.entity';
     CategoriesService
   ],
 
-})  
+})
 export class CategoriesModule { }

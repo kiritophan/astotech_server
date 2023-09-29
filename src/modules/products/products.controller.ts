@@ -4,7 +4,7 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { uploadFileToStorage } from '../../firebase';
 import { Response } from 'express';
 import { CreateProductDto } from './dto/create-product.dto';
-
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -13,21 +13,30 @@ export class ProductsController {
   @Post()
   async create(@Body() createProductDto: CreateProductDto, @Res() res: Response) {
     try {
-      let productRes = await this.productsService.create(createProductDto)
-      res.status(productRes.data ? HttpStatus.OK : HttpStatus.ACCEPTED).json(productRes)
+      let [status, message, data] = await this.productsService.create(createProductDto);
+      return res.status(status ? 200 : 213).json({
+        message,
+        data
+      })
     } catch (err) {
-      console.log("err", err);
-
-      throw new HttpException('Lỗi controller', HttpStatus.BAD_REQUEST)
+      return res.status(500).json({
+        message: "Controller error!"
+      })
     }
   }
 
   @Get()
-  async findAll(@Res() res: Response, @Query('q') q: string) {
+  async findAll(@Res() res: Response) {
     try {
-      return res.status(HttpStatus.OK).json(await this.productsService.findAll())
+      let [status, message, data] = await this.productsService.findAll();
+      return res.status(status ? 200 : 213).json({
+        message,
+        data
+      })
     } catch (err) {
-      throw new HttpException('Lỗi controller', HttpStatus.BAD_REQUEST)
+      return res.status(500).json({
+        message: "Controller error!"
+      })
     }
   }
 
@@ -40,6 +49,17 @@ export class ProductsController {
       throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
     }
   }
+
+  @Get('/category/:id')
+  async findByCategory(@Param('id') id: string, @Res() res: Response) {
+    try {
+      let serviceRes = await this.productsService.findByCategory(id);
+      return res.status(serviceRes.status ? 200 : 213).json(serviceRes);
+    } catch (err) {
+      throw new HttpException('Loi Controller', HttpStatus.BAD_REQUEST);
+    }
+  }
+
 
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
