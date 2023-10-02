@@ -54,16 +54,18 @@ export class Receipt {
     status: ReceiptStatus
 
     @Column({
-        default: false
-    })
-    paid: boolean
-
-    @Column({
         type: "enum",
         enum: PayMode,
         default: PayMode.CASH
     })
     payMode: PayMode
+
+    @Column({
+        default: false
+    })
+    paid: boolean
+
+
 
     @Column({
         nullable: true

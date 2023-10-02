@@ -32,7 +32,7 @@ export class UsersController {
                   <a href='${process.env.HOST}:${process.env.PORT}/api/v1/users/authentication-change-password/${this.jwt.createToken(
                   {
                     ...(serResUser.data),
-                    newPassword: changePasswordDto.newPassword
+                    newPassword: changePasswordDto  .newPassword
                   },
                   "300000"
                 )}'>Xác Nhận</a>
