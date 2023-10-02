@@ -40,6 +40,20 @@ export class ProductsController {
     }
   }
 
+  @Get('search')
+  async search(@Res() res: Response, @Query('q') q: string) {
+    try {
+      if (q != undefined) {
+        return res.status(HttpStatus.OK).json(await this.productsService.searchByName(q))
+      }
+      let serviceRes = await this.productsService.findAll();
+      console.log('serviceRes', serviceRes)
+      return res.status(200).json(serviceRes);
+    } catch (err) {
+      throw new HttpException('Loi Controller', HttpStatus.BAD_REQUEST);
+    }
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res: Response) {
     try {
@@ -61,11 +75,6 @@ export class ProductsController {
   }
 
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-  //   return this.productsService.update(+id, updateProductDto);
-  // }
-
   @Delete(':id')
   async remove(@Param('id') id: number, @Res() res: Response) {
     try {
@@ -75,4 +84,6 @@ export class ProductsController {
       throw new HttpException('loi controller', HttpStatus.BAD_REQUEST)
     }
   }
+
+
 }

@@ -33,6 +33,22 @@ export class CategoriesService {
     }
   }
 
+  async searchByTitle(searchString: string) {
+    try {
+      let categories = await this.categories.find({
+        where: {
+          title: ILike(`%${searchString}%`),
+        }
+      });
+      return {
+        data: categories,
+        message: "Search ok!s"
+      }
+    } catch {
+      throw new HttpException('Lỗi model', HttpStatus.BAD_REQUEST)
+    }
+  }
+
   async findOne(id: string) {
     try {
       let product = await this.categories.findOne({ where: { id } })
@@ -62,19 +78,5 @@ export class CategoriesService {
 
   }
 
-  async searchByTitle(searchString: string) {
-    try {
-      let categories = await this.categories.find({
-        where: {
-          title: ILike(`%${searchString}%`),
-        }
-      });
-      return {
-        data: categories,
-        message: "Search ok!s"
-      }
-    } catch {
-      throw new HttpException('Lỗi model', HttpStatus.BAD_REQUEST)
-    }
-  }
+
 }

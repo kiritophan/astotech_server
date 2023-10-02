@@ -16,9 +16,9 @@ export class Category {
         default: "https://static.thenounproject.com/png/547804-200.png"
     })
     avatar: string;
-    
+
     @Column({
-        default: false
+        default: true
     })
     status: boolean;
 
