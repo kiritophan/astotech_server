@@ -5,7 +5,7 @@ import { Server, Socket } from 'socket.io'
 import { User } from "src/modules/users/entities/user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Receipt, ReceiptStatus } from "src/modules/receipts/entities/receipt.entity";
-import { Repository } from "typeorm";
+import { Not, Repository } from "typeorm";
 import { ReceiptDetail } from "src/modules/receipt-detail/entities/receipt-detail.entity";
 
 interface ClientType {
@@ -83,6 +83,30 @@ export class UserSocketGateway implements OnModuleInit {
                         socket.emit("receiveCart", cart)
                     }
                 })
+
+                socket.on("payCash", async (data: {
+                    receiptId: string,
+                    userId: string,
+                    total: number
+                }) => {
+                    console.log("data", data)
+                    let cashInfor = await this.cash(data.receiptId, data.userId, data.total)
+                    if (cashInfor) {
+                        for (let i in this.clients) {
+                            if (this.clients[i].user.id == user.id) {
+                                this.clients[i].socket.emit("receiveCart", cashInfor[0])
+                                this.clients[i].socket.emit("receiveReceipt", cashInfor[1])
+                            }
+                        }
+                    }
+                })
+
+                // socket.on("deleteItemFromCart", async (newItem: { receiptId: string, optionId: number }) => {
+                //     let cart = await this.deleteItemFromCart(newItem);
+                //     if (cart) {
+                //         socket.emit("receiveCart", cart)
+                //     }
+                // })
             }
         })
     }
@@ -118,7 +142,45 @@ export class UserSocketGateway implements OnModuleInit {
             return false
         }
     }
+    async cash(receiptId: string, userId: string, total: number) {
+        try {
+            let nowCart = await this.receipts.findOne({
+                where: {
+                    id: receiptId
+                }
+            })
+            if (!nowCart) return false
+            let cartUpdate = this.receipts.merge(nowCart, {
+                status: ReceiptStatus.PENDING,
+                total
+            })
+            let cartResult = await this.receipts.save(cartUpdate);
+            if (!cartResult) return false
 
+            // Tạo Cart Mới
+            let newCart = await this.getCartByUserId(userId);
+            if (!newCart) return false
+
+            let receipts = await this.receipts.find({
+                where: {
+                    userId,
+                    status: Not(ReceiptStatus.SHOPPING)
+                },
+                relations: {
+                    detail: {
+                        option: {
+                            product: true,
+                            pictures: true
+                        }
+                    }
+                }
+            })
+            if (!receipts) return false
+            return [newCart, receipts]
+        } catch (err) {
+            return false
+        }
+    }
     async getCartByUserId(userId: string) {
         try {
             let oldCart = await this.receipts.find({
