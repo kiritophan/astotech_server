@@ -107,12 +107,12 @@ export class UserSocketGateway implements OnModuleInit {
                     }
                 })
 
-                // socket.on("deleteItemFromCart", async (newItem: { receiptId: string, optionId: number }) => {
-                //     let cart = await this.deleteItemFromCart(newItem);
-                //     if (cart) {
-                //         socket.emit("receiveCart", cart)
-                //     }
-                // })
+                socket.on("deleteItemFromCart", async (newItem: { receiptId: string, optionId: string }) => {
+                    let cart = await this.deleteItemFromCart(newItem);
+                    if (cart) {
+                        socket.emit("receiveCart", cart)
+                    }
+                })
 
 
                 socket.on("payZalo", async (data: {
@@ -453,5 +453,37 @@ export class UserSocketGateway implements OnModuleInit {
             .catch(function (error) {
                 return false
             });
+    }
+
+    async deleteItemFromCart(newItem: { receiptId: string, optionId: string }) {
+        try {
+            const { receiptId, optionId } = newItem;
+
+            // Xóa mục từ giỏ hàng
+            await this.receiptDetail.delete({
+                receiptId,
+                optionId
+            });
+
+            // Lấy lại thông tin giỏ hàng sau khi xóa
+            let cart = await this.receipts.findOne({
+                where: {
+                    id: receiptId
+                },
+                relations: {
+                    detail: {
+                        option: {
+                            product: true,
+                            pictures: true
+                        }
+                    }
+                }
+            });
+
+            if (!cart) return false;
+            return cart;
+        } catch (err) {
+            return false;
+        }
     }
 } 
