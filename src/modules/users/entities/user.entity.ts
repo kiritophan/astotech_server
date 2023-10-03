@@ -17,13 +17,13 @@ export class User {
     @Column({ default: false })
     emailAuthentication: boolean;
 
-    @Column({ length: 20 })
+    @Column({ default: "phan" })
     firstName: string;
 
-    @Column({ length: 20 })
+    @Column({ default: "dau" })
     lastName: string;
 
-    @Column({ unique: true, length: 20 })
+    @Column({ unique: true, length: 50 })
     userName: string;
 
     @Column()

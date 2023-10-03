@@ -9,10 +9,56 @@ import * as  bcrypt from 'bcrypt'
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import common from 'src/utils/common';
+import axios from 'axios';
+import { GoogleLoginDto } from './dto/google-login.dto';
+import jwt from 'src/utils/jwt';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService, private readonly mail: MailService, private readonly jwt: JwtService) { }
+
+  @Post('google-login')
+  async googleLogin(@Body() googleLoginDto: GoogleLoginDto, @Req() req: Request, @Res() res: Response) {
+    try {
+      await axios.post("https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyBC1KAVcuX7kcqMcA567l7NCvKCS7gDsiM", {
+        idToken: googleLoginDto.accessToken
+      })
+      // let userExist = await this.userService.findByUserName(googleLoginDto.email);
+      let userExist = await this.usersService.findByUserEmail(googleLoginDto.email);
+      if (userExist.status) {
+        // đã có tài khoản liên kết gmail này
+        let token = jwt.createToken(userExist.data, "1d");
+        return res.status(200).json({
+          token
+        })
+      } else {
+        /* Đăng ký */
+        let newUserRes = await this.usersService.create({
+          email: googleLoginDto.email,
+          userName: googleLoginDto.email,
+          password: googleLoginDto.password,
+          firstName: "No Name",
+          lastName: "No Name",
+        })
+
+
+        if (newUserRes.status) {
+          let token = jwt.createToken(newUserRes.data, "1d");
+          return res.status(200).json({
+            token
+          })
+        }
+
+        return res.status(213).json({
+          message: "Đăng nhập với google thất bại!"
+        })
+      }
+    } catch {
+      return res.status(500).json({
+        message: "Lỗi controller"
+      })
+    }
+  }
 
   @Post('change-password')
   async changePassword(@Body() changePasswordDto: ChangePasswordDto, @Req() req: Request, @Res() res: Response) {
@@ -32,7 +78,7 @@ export class UsersController {
                   <a href='${process.env.HOST}:${process.env.PORT}/api/v1/users/authentication-change-password/${this.jwt.createToken(
                   {
                     ...(serResUser.data),
-                    newPassword: changePasswordDto  .newPassword
+                    newPassword: changePasswordDto.newPassword
                   },
                   "300000"
                 )}'>Xác Nhận</a>
