@@ -79,7 +79,7 @@ export class Receipt {
     @Column()
     creatAt: string;
 
-    @Column()
+    @Column({ default: 0 })
     total: number;
 
     @BeforeInsert()

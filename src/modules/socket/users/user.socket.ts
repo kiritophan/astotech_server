@@ -164,6 +164,63 @@ export class UserSocketGateway implements OnModuleInit {
             return false
         }
     }
+    // async cash(receiptId: string, userId: string, options: {
+    //     payMode: PayMode,
+    //     paid?: boolean,
+    //     paidAt?: string,
+    //     zaloTranId?: string
+    // } | null = null): Promise<[Receipt, Receipt[]] | null> {
+    //     try {
+    //         let nowCart = await this.receipts.findOne({
+    //             where: {
+    //                 id: receiptId
+    //             },
+    //             relations: {
+    //                 detail: {
+    //                     option: {
+    //                         product: true,
+    //                         pictures: true
+    //                     }
+    //                 }
+    //             }
+    //         })
+    //         if (!nowCart) return null
+    //         let cartUpdate = this.receipts.merge(nowCart, {
+    //             status: ReceiptStatus.PENDING,
+    //             total: nowCart.detail?.reduce((value, cur) => {
+    //                 return value += cur.quantity * cur.option.price
+    //             }, 0),
+    //             ...options
+    //         })
+    //         let cartResult = await this.receipts.save(cartUpdate);
+    //         if (!cartResult) return null
+
+    //         // Tạo Cart Mới
+    //         let newCart = await this.getCartByUserId(userId);
+    //         if (!newCart) return null
+
+    //         let receipts = await this.receipts.find({
+    //             where: {
+    //                 userId,
+    //                 status: Not(ReceiptStatus.SHOPPING)
+    //             },
+    //             relations: {
+    //                 detail: {
+    //                     option: {
+    //                         product: true,
+    //                         pictures: true
+    //                     }
+    //                 }
+    //             }
+    //         })
+    //         if (!receipts) return null
+
+    //         return [newCart, receipts]
+    //     } catch (err) {
+    //         return null
+    //     }
+    // }
+
     async cash(receiptId: string, userId: string, options: {
         payMode: PayMode,
         paid?: boolean,
@@ -220,6 +277,7 @@ export class UserSocketGateway implements OnModuleInit {
             return null
         }
     }
+
     async getCartByUserId(userId: string) {
         try {
             let oldCart = await this.receipts.find({
